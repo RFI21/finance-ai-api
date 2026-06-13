@@ -51,7 +51,6 @@ export default async function handler(req, res) {
 
     const data = await geminiResponse.json();
 
-
     return res.status(geminiResponse.status).json(data);
 
   } catch (error) {
