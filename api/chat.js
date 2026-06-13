@@ -21,9 +21,43 @@ export default async function handler(req, res) {
 
     const { message, systemPrompt } = req.body;
 
-    // lanjutkan fetch Gemini...
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: message
+                }
+              ]
+            }
+          ],
+          systemInstruction: {
+            parts: [
+              {
+                text: systemPrompt || ""
+              }
+            ]
+          }
+        })
+      }
+    );
+
+    const data = await geminiResponse.json();
+
+    console.log("GEMINI RESPONSE:", data);
+
+    return res.status(geminiResponse.status).json(data);
 
   } catch (error) {
+
+    console.error(error);
 
     return res.status(500).json({
       error: error.message
